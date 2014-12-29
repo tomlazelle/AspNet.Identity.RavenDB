@@ -33,16 +33,24 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc
                 IDocumentStore store = new DocumentStore
                 {
                     Url = "http://localhost:8080",
-                    DefaultDatabase = RavenDefaultDatabase
+                    DefaultDatabase = RavenDefaultDatabase                   
                 }.Initialize();
 
+                
                 store.DatabaseCommands.EnsureDatabaseExists(RavenDefaultDatabase);
 
                 return store;
 
             }).As<IDocumentStore>().SingleInstance();
 
-            builder.Register(c => c.Resolve<IDocumentStore>().OpenAsyncSession()).As<IAsyncDocumentSession>().InstancePerHttpRequest();
+            builder.Register(c =>
+            {
+                IAsyncDocumentSession result = c.Resolve<IDocumentStore>().OpenAsyncSession();
+                result.Advanced.UseOptimisticConcurrency = true;
+                return result;
+            }).As<IAsyncDocumentSession>().InstancePerHttpRequest();
+
+
             builder.Register(c => new RavenUserStore<ApplicationUser>(c.Resolve<IAsyncDocumentSession>(), false)).As<IUserStore<ApplicationUser>>().InstancePerHttpRequest();
             builder.RegisterType<UserManager<ApplicationUser>>().InstancePerHttpRequest();
 

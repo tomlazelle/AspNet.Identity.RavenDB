@@ -1,11 +1,13 @@
 ﻿using AspNet.Identity.RavenDB.Entities;
 using AspNet.Identity.RavenDB.Stores;
+using AssertExLib;
 using Microsoft.AspNet.Identity;
 using Raven.Abstractions.Exceptions;
 using Raven.Client;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Sdk;
 
 namespace AspNet.Identity.RavenDB.Tests.Stores
 {
@@ -224,7 +226,8 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     IUserEmailStore<RavenUser> userEmailStore = new RavenUserStore<RavenUser>(ses);
                     RavenUser ravenUser = await ses.LoadAsync<RavenUser>(userId);
                     
-                    await Assert.ThrowsAsync<InvalidOperationException>(async () => 
+                    
+                    AssertEx.TaskThrows<InvalidOperationException>(async ()=>
                     {
                         bool isConfirmed = await userEmailStore.GetEmailConfirmedAsync(ravenUser);
                     });
@@ -304,7 +307,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     RavenUser ravenUser = await ses.LoadAsync<RavenUser>(userId2);
                     await userEmailStore.SetEmailAsync(ravenUser, email);
 
-                    await Assert.ThrowsAsync<ConcurrencyException>(async () =>
+                    AssertEx.TaskThrows<ConcurrencyException>(async () =>
                     {
                         await ses.SaveChangesAsync();
                     });
@@ -425,7 +428,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     IUserEmailStore<RavenUser> userEmailStore = new RavenUserStore<RavenUser>(ses);
                     RavenUser ravenUser = await ses.LoadAsync<RavenUser>(userId);
 
-                    await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                    AssertEx.TaskThrows<InvalidOperationException>(async () =>
                     {
                         await userEmailStore.SetEmailConfirmedAsync(ravenUser, confirmed: true);
                     });
@@ -456,7 +459,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     IUserEmailStore<RavenUser> userEmailStore = new RavenUserStore<RavenUser>(ses);
                     RavenUser ravenUser = await ses.LoadAsync<RavenUser>(userId);
 
-                    await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                    AssertEx.TaskThrows<InvalidOperationException>(async () =>
                     {
                         await userEmailStore.SetEmailConfirmedAsync(ravenUser, confirmed: true);
                     });

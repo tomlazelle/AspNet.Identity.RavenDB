@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using AspNet.Identity.RavenDB.Sample.Mvc.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-using AspNet.Identity.RavenDB.Sample.Mvc.Models;
-using AspNet.Identity.RavenDB.Stores;
-using Raven.Client;
 
 namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
-        public UserManager<ApplicationUser> UserManager { get; private set; }
-
         public AccountController(UserManager<ApplicationUser> userManager)
         {
             UserManager = userManager;
         }
+
+        public UserManager<ApplicationUser> UserManager { get; private set; }
 
         //
         // GET: /Account/Login
@@ -98,7 +92,7 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
         public async Task<ActionResult> Disassociate(string loginProvider, string providerKey)
         {
             ManageMessageId? message = null;
-            IdentityResult result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
+            var result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
             if (result.Succeeded)
             {
                 message = ManageMessageId.RemoveLoginSuccess;
@@ -107,7 +101,10 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
             {
                 message = ManageMessageId.Error;
             }
-            return RedirectToAction("Manage", new { Message = message });
+            return RedirectToAction("Manage", new
+            {
+                Message = message
+            });
         }
 
         //
@@ -116,10 +113,10 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
         {
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : "";
+                    : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                        : message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
+                            : message == ManageMessageId.Error ? "An error has occurred."
+                                : "";
             ViewBag.HasLocalPassword = HasPassword();
             ViewBag.ReturnUrl = Url.Action("Manage");
             return View();
@@ -131,17 +128,20 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Manage(ManageUserViewModel model)
         {
-            bool hasPassword = HasPassword();
+            var hasPassword = HasPassword();
             ViewBag.HasLocalPassword = hasPassword;
             ViewBag.ReturnUrl = Url.Action("Manage");
             if (hasPassword)
             {
                 if (ModelState.IsValid)
                 {
-                    IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+                    var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("Manage", new { Message = ManageMessageId.ChangePasswordSuccess });
+                        return RedirectToAction("Manage", new
+                        {
+                            Message = ManageMessageId.ChangePasswordSuccess
+                        });
                     }
                     else
                     {
@@ -152,7 +152,7 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
             else
             {
                 // User does not have a password so remove any validation errors caused by a missing OldPassword field
-                ModelState state = ModelState["OldPassword"];
+                var state = ModelState["OldPassword"];
                 if (state != null)
                 {
                     state.Errors.Clear();
@@ -160,10 +160,13 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    IdentityResult result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
+                    var result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("Manage", new { Message = ManageMessageId.SetPasswordSuccess });
+                        return RedirectToAction("Manage", new
+                        {
+                            Message = ManageMessageId.SetPasswordSuccess
+                        });
                     }
                     else
                     {
@@ -184,7 +187,10 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // Request a redirect to the external login provider
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new
+            {
+                ReturnUrl = returnUrl
+            }));
         }
 
         //
@@ -210,7 +216,10 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
                 // If the user does not have an account, then prompt the user to create an account
                 ViewBag.ReturnUrl = returnUrl;
                 ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { UserName = loginInfo.DefaultUserName });
+                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel
+                {
+                    UserName = loginInfo.DefaultUserName
+                });
             }
         }
 
@@ -231,14 +240,20 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(XsrfKey, User.Identity.GetUserId());
             if (loginInfo == null)
             {
-                return RedirectToAction("Manage", new { Message = ManageMessageId.Error });
+                return RedirectToAction("Manage", new
+                {
+                    Message = ManageMessageId.Error
+                });
             }
             var result = await UserManager.AddLoginAsync(User.Identity.GetUserId(), loginInfo.Login);
             if (result.Succeeded)
             {
                 return RedirectToAction("Manage");
             }
-            return RedirectToAction("Manage", new { Message = ManageMessageId.Error });
+            return RedirectToAction("Manage", new
+            {
+                Message = ManageMessageId.Error
+            });
         }
 
         //
@@ -302,11 +317,20 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
         {
             var linkedAccounts = UserManager.GetLogins(User.Identity.GetUserId());
             ViewBag.ShowRemoveButton = HasPassword() || linkedAccounts.Count > 1;
-            return (ActionResult)PartialView("_RemoveAccountPartial", linkedAccounts);
+            return (ActionResult) PartialView("_RemoveAccountPartial", linkedAccounts);
         }
 
         #region Helpers
+
         // Used for XSRF protection when adding external logins
+        public enum ManageMessageId
+        {
+            ChangePasswordSuccess,
+            SetPasswordSuccess,
+            RemoveLoginSuccess,
+            Error
+        }
+
         private const string XsrfKey = "XsrfId";
 
         private IAuthenticationManager AuthenticationManager
@@ -321,7 +345,10 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
             var identity = await UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-            AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, identity);
+            AuthenticationManager.SignIn(new AuthenticationProperties()
+            {
+                IsPersistent = isPersistent
+            }, identity);
         }
 
         private void AddErrors(IdentityResult result)
@@ -342,14 +369,6 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
             return false;
         }
 
-        public enum ManageMessageId
-        {
-            ChangePasswordSuccess,
-            SetPasswordSuccess,
-            RemoveLoginSuccess,
-            Error
-        }
-
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -364,7 +383,8 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
 
         private class ChallengeResult : HttpUnauthorizedResult
         {
-            public ChallengeResult(string provider, string redirectUri) : this(provider, redirectUri, null)
+            public ChallengeResult(string provider, string redirectUri)
+                : this(provider, redirectUri, null)
             {
             }
 
@@ -381,7 +401,10 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
 
             public override void ExecuteResult(ControllerContext context)
             {
-                var properties = new AuthenticationProperties() { RedirectUri = RedirectUri };
+                var properties = new AuthenticationProperties()
+                {
+                    RedirectUri = RedirectUri
+                };
                 if (UserId != null)
                 {
                     properties.Dictionary[XsrfKey] = UserId;
@@ -389,6 +412,7 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc.Controllers
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
         }
+
         #endregion
     }
 }

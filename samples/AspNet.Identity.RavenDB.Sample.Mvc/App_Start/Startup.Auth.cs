@@ -32,7 +32,7 @@ namespace AspNet.Identity.RavenDB.Sample.Mvc
             //   appId: "",
             //   appSecret: "");
 
-            //app.UseGoogleAuthentication();
+            app.UseGoogleAuthentication();
         }
     }
 }

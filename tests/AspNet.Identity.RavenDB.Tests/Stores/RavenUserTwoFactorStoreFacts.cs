@@ -3,14 +3,15 @@ using AspNet.Identity.RavenDB.Stores;
 using Microsoft.AspNet.Identity;
 using Raven.Client;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 
 namespace AspNet.Identity.RavenDB.Tests.Stores
 {
-    public class RavenUserTwoFactorStoreFacts : TestBase
+    [TestFixture]
+    public class RavenUserTwoTestorStoreTests : TestBase
     {
-        [Fact]
-        public async Task GetTwoFactorEnabledAsync_Should_Get_User_IsTwoFactorEnabled_Value()
+        [Test]
+        public async Task GetTwoTestorEnabledAsync_Should_Get_User_IsTwoTestorEnabled_Value()
         {
             using (IDocumentStore store = CreateEmbeddableStore())
             {
@@ -31,17 +32,17 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     // Act
                     ses.Advanced.UseOptimisticConcurrency = true;
                     RavenUser user = await ses.LoadAsync<RavenUser>(userId);
-                    IUserTwoFactorStore<RavenUser, string> userTwoFactorStore = new RavenUserStore<RavenUser>(ses);
-                    bool isTwoFactorEnabled = await userTwoFactorStore.GetTwoFactorEnabledAsync(user);
+                    IUserTwoFactorStore<RavenUser, string> userTwoTestorStore = new RavenUserStore<RavenUser>(ses);
+                    bool isTwoTestorEnabled = await userTwoTestorStore.GetTwoFactorEnabledAsync(user);
 
                     // Assert
-                    Assert.True(isTwoFactorEnabled);
+                    Assert.True(isTwoTestorEnabled);
                 }
             }
         }
 
-        [Fact]
-        public async Task SetTwoFactorEnabledAsync_Should_Set_IsTwoFactorEnabled_Value()
+        [Test]
+        public async Task SetTwoTestorEnabledAsync_Should_Set_IsTwoTestorEnabled_Value()
         {
             using (IDocumentStore store = CreateEmbeddableStore())
             {
@@ -62,8 +63,8 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     // Act
                     ses.Advanced.UseOptimisticConcurrency = true;
                     RavenUser user = await ses.LoadAsync<RavenUser>(userId);
-                    IUserTwoFactorStore<RavenUser, string> userTwoFactorStore = new RavenUserStore<RavenUser>(ses);
-                    await userTwoFactorStore.SetTwoFactorEnabledAsync(user, enabled: true);
+                    IUserTwoFactorStore<RavenUser, string> userTwoTestorStore = new RavenUserStore<RavenUser>(ses);
+                    await userTwoTestorStore.SetTwoFactorEnabledAsync(user, enabled: true);
 
                     // Assert
                     Assert.True(user.IsTwoFactorEnabled);

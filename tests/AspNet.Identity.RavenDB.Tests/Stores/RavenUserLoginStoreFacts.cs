@@ -7,13 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 
 namespace AspNet.Identity.RavenDB.Tests.Stores
 {
-    public class RavenUserLoginStoreFacts : TestBase
+    [TestFixture]
+    public class RavenUserLoginStoreTests : TestBase
     {
-        [Fact]
+        [Test]
         public async Task Add_Should_Add_New_Login_If_User_Exists()
         {
             const string userName = "Tugberk";
@@ -44,13 +45,13 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
 
                     // Assert
                     RavenUserLogin foundLogin = await ses.LoadAsync<RavenUserLogin>(RavenUserLogin.GenerateKey(loginProvider, providerKey));
-                    Assert.Equal(1, user.Logins.Count());
+                    Assert.AreEqual(1, user.Logins.Count());
                     Assert.NotNull(foundLogin);
                 }
             }
         }
 
-        [Fact]
+        [Test]
         public async Task Add_Should_Add_New_Login_Just_After_UserManager_CreateAsync_Get_Called()
         {
             const string userName = "Tugberk";
@@ -80,13 +81,13 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     RavenUserLogin foundLogin = await ses.LoadAsync<RavenUserLogin>(RavenUserLogin.GenerateKey(loginProvider, providerKey));
 
                     // Assert
-                    Assert.Equal(1, user.Logins.Count());
+                    Assert.AreEqual(1, user.Logins.Count());
                     Assert.NotNull(foundLogin);
                 }
             }
         }
 
-        [Fact]
+        [Test]
         public async Task FindAsync_Should_Find_The_User_If_Login_Exists()
         {
             const string userName = "Tugberk";
@@ -119,7 +120,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
 
                     // Assert
                     Assert.NotNull(foundUser);
-                    Assert.Equal(userName, foundUser.UserName);
+                    Assert.AreEqual(userName, foundUser.UserName);
                 }
             }
         }

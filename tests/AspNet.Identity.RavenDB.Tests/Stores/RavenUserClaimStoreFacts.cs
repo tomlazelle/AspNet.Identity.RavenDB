@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
 
 namespace AspNet.Identity.RavenDB.Tests.Stores
 {
-    public class RavenUserClaimStoreFacts : TestBase
+    [TestFixture]
+    public class RavenUserClaimStoreTests : TestBase
     {
-        [Fact]
+        [Test]
         public async Task GetUserClaims_Should_Retrieve_Correct_Claims_For_User()
         {
             string userName = "Tugberk";
@@ -46,14 +47,14 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     IUserClaimStore<RavenUser> userClaimStore = new RavenUserStore<RavenUser>(ses);
                     IEnumerable<Claim> retrievedClaims = await userClaimStore.GetClaimsAsync(user);
 
-                    Assert.Equal(2, claims.Count());
-                    Assert.Equal("Read", claims.ElementAt(0).ClaimValue);
-                    Assert.Equal("Write", claims.ElementAt(1).ClaimValue);
+                    Assert.AreEqual(2, claims.Count());
+                    Assert.AreEqual("Read", claims.ElementAt(0).ClaimValue);
+                    Assert.AreEqual("Write", claims.ElementAt(1).ClaimValue);
                 }
             }
         }
 
-        [Fact]
+        [Test]
         public async Task GetUserClaims_Should_Not_Return_Null_If_User_Has_No_Claims()
         {
             string userName = "Tugberk";
@@ -72,11 +73,11 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                 IEnumerable<Claim> retrievedClaims = await userClaimStore.GetClaimsAsync(user);
 
                 // Assert
-                Assert.Equal(0, retrievedClaims.Count());
+                Assert.AreEqual(0, retrievedClaims.Count());
             }
         }
 
-        [Fact]
+        [Test]
         public async Task AddClaimAsync_Should_Add_The_Claim_Into_The_User_Claims_Collection()
         {
             string userName = "Tugberk";
@@ -94,13 +95,13 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                 Claim claimToAdd = new Claim(ClaimTypes.Role, "Customer");
                 await userClaimStore.AddClaimAsync(user, claimToAdd);
 
-                Assert.Equal(1, user.Claims.Count());
-                Assert.Equal(claimToAdd.Value, user.Claims.FirstOrDefault().ClaimValue);
-                Assert.Equal(claimToAdd.Type, user.Claims.FirstOrDefault().ClaimType);
+                Assert.AreEqual(1, user.Claims.Count());
+                Assert.AreEqual(claimToAdd.Value, user.Claims.FirstOrDefault().ClaimValue);
+                Assert.AreEqual(claimToAdd.Type, user.Claims.FirstOrDefault().ClaimType);
             }
         }
 
-        [Fact]
+        [Test]
         public async Task RemoveClaimAsync_Should_Remove_Claim_From_The_User_Claims_Collection()
         {
             string userName = "Tugberk";
@@ -123,7 +124,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                 await userClaimStore.RemoveClaimAsync(user, claimToAddAndRemove);
 
                 // Assert
-                Assert.Equal(0, user.Claims.Count());
+                Assert.AreEqual(0, user.Claims.Count());
             }
         }
     }

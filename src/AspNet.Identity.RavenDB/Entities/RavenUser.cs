@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
 using Raven.Imports.Newtonsoft.Json;
@@ -23,7 +22,8 @@ namespace AspNet.Identity.RavenDB.Entities
             _logins = new List<RavenUserLogin>();
         }
 
-        public RavenUser(string userName, string email) : this(userName)
+        public RavenUser(string userName, string email)
+            : this(userName)
         {
             Email = email;
         }
@@ -36,7 +36,6 @@ namespace AspNet.Identity.RavenDB.Entities
         public string SecurityStamp { get; private set; }
         public bool IsLockoutEnabled { get; private set; }
         public bool IsTwoFactorEnabled { get; private set; }
-
         public int AccessFailedCount { get; private set; }
         public DateTimeOffset? LockoutEndDate { get; private set; }
 
@@ -57,6 +56,7 @@ namespace AspNet.Identity.RavenDB.Entities
                 _claims.AddRange(value);
             }
         }
+
         public IEnumerable<RavenUserLogin> Logins
         {
             get

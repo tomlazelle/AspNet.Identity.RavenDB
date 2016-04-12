@@ -5,11 +5,9 @@
     <version>$version$</version>
     <title>$title$</title>
     <authors>$author$</authors>
-    <owners>$author$</owners>
-    <licenseUrl>https://raw.github.com/tugberkugurlu/AspNet.Identity.RavenDB/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/tugberkugurlu/AspNet.Identity.RavenDB</projectUrl>
-    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <owners>$author$</owners>   
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <tags>Identity AspNet RavenDB Membership</tags>
+    <copyright>Copyright 2015</copyright>
   </metadata>
 </package>

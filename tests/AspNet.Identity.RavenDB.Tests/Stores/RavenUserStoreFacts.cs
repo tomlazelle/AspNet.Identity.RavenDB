@@ -5,13 +5,15 @@ using Raven.Client;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Xunit;
+using NUnit.Framework;
+
 
 namespace AspNet.Identity.RavenDB.Tests.Stores
 {
-    public class RavenUserStoreFacts : TestBase
+    [TestFixture]
+    public class RavenUserStoreTests : TestBase
     {
-        [Fact]
+        [Test]
         public async Task Should_Create_User()
         {
             string userName = "Tugberk";
@@ -33,7 +35,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
             }
         }
 
-        [Fact]
+        [Test]
         public async Task CreateAsync_Should_Create_User_By_Putting_The_UserName_As_The_Key()
         {
             string userName = "Tugberk";
@@ -52,11 +54,11 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     .ConfigureAwait(false)).FirstOrDefault();
 
                 Assert.NotNull(user);
-                Assert.Equal(string.Format(Constants.RavenUserKeyTemplate, userName), user.Id);
+                Assert.AreEqual(string.Format(Constants.RavenUserKeyTemplate, userName), user.Id);
             }
         }
 
-        [Fact]
+        [Test]
         public async Task Should_Retrieve_User_By_UserName()
         {
             string userName = "Tugberk";
@@ -72,11 +74,11 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                 IUser user = await userStore.FindByNameAsync(userName);
 
                 Assert.NotNull(user);
-                Assert.Equal(userName, user.UserName, StringComparer.InvariantCultureIgnoreCase);
+                Assert.AreEqual(userName, user.UserName);
             }
         }
 
-        [Fact]
+        [Test]
         public async Task Should_Return_Null_For_Non_Existing_User_By_UserName()
         {
             string userName = "Tugberk";
@@ -96,7 +98,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
             }
         }
 
-        [Fact]
+        [Test]
         public async Task Should_Retrieve_User_By_UserId()
         {
             string userName = "Tugberk";
@@ -113,7 +115,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                 IUser user = await userStore.FindByIdAsync(userId);
 
                 Assert.NotNull(user);
-                Assert.Equal(userName, user.UserName, StringComparer.InvariantCultureIgnoreCase);
+                Assert.AreEqual(userName, user.UserName);
             }
         }
     }

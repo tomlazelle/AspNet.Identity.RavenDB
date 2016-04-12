@@ -6,16 +6,17 @@ using Raven.Abstractions.Exceptions;
 using Raven.Client;
 using System;
 using System.Threading.Tasks;
-using Xunit;
-using Xunit.Sdk;
+using NUnit.Framework;
 
 namespace AspNet.Identity.RavenDB.Tests.Stores
 {
-    public class RavenUserEmailStoreFacts : TestBase
+
+    [TestFixture]
+    public class RavenUserEmailStoreTests : TestBase
     {
         // FindByEmailAsync
 
-        [Fact]
+        [Test]
         public async Task FindByEmailAsync_Should_Return_The_Correct_User_If_Available()
         {
             const string userName = "Tugberk";
@@ -41,13 +42,13 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     RavenUser user = await userEmailStore.FindByEmailAsync(email);
 
                     Assert.NotNull(user);
-                    Assert.Equal(userId, user.Id);
-                    Assert.Equal(userName, user.UserName);
+                    Assert.AreEqual(userId, user.Id);
+                    Assert.AreEqual(userName, user.UserName);
                 }
             }
         }
 
-        [Fact]
+        [Test]
         public async Task FindByEmailAsync_Should_Return_Null_If_User_Is_Not_Available()
         {
             const string userName = "Tugberk";
@@ -79,7 +80,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
 
         // GetEmailAsync
 
-        [Fact]
+        [Test]
         public async Task GetEmailAsync_Should_Return_User_Email_If_Available()
         {
             const string userName = "Tugberk";
@@ -106,12 +107,12 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     string userEmail = await userEmailStore.GetEmailAsync(ravenUser);
 
                     Assert.NotNull(userEmail);
-                    Assert.Equal(email, userEmail);
+                    Assert.AreEqual(email, userEmail);
                 }
             }
         }
 
-        [Fact]
+        [Test]
         public async Task GetEmailAsync_Should_Return_Null_If_User_Email_Is_Not_Available()
         {
             const string userName = "Tugberk";
@@ -141,7 +142,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
 
         // GetEmailConfirmedAsync
 
-        [Fact]
+        [Test]
         public async Task GetEmailConfirmedAsync_Should_Return_True_If_Email_Confirmed()
         {
             const string userName = "Tugberk";
@@ -173,7 +174,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
             }
         }
 
-        [Fact]
+        [Test]
         public async Task GetEmailConfirmedAsync_Should_Return_False_If_Email_Is_Not_Confirmed()
         {
             const string userName = "Tugberk";
@@ -204,7 +205,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
             }
         }
 
-        [Fact]
+        [Test]
         public async Task GetEmailConfirmedAsync_Should_Throw_InvalidOperationException_If_Email_Is_Not_Available()
         {
             const string userName = "Tugberk";
@@ -237,7 +238,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
 
         // SetEmailAsync
 
-        [Fact]
+        [Test]
         public async Task SetEmailAsync_Should_Set_The_Email_Correctly()
         {
             const string userName = "Tugberk";
@@ -271,14 +272,14 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     RavenUserEmail userEmail = await ses.LoadAsync<RavenUserEmail>(keyToLookFor);
 
                     Assert.NotNull(userEmail);
-                    Assert.Equal(emailToSave, ravenUser.Email);
-                    Assert.Equal(emailToSave, userEmail.Email);
-                    Assert.Equal(userId, userEmail.UserId);
+                    Assert.AreEqual(emailToSave, ravenUser.Email);
+                    Assert.AreEqual(emailToSave, userEmail.Email);
+                    Assert.AreEqual(userId, userEmail.UserId);
                 }
             }
         }
 
-        [Fact]
+        [Test]
         public async Task SetEmailAsync_Should_Set_Email_And_SaveChangesAsync_Should_Throw_ConcurrencyException_If_The_Email_Already_Exists()
         {
             const string userName = "Tugberk";
@@ -323,7 +324,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
 
         // SetEmailConfirmedAsync
 
-        [Fact]
+        [Test]
         public async Task SetEmailConfirmedAsync_With_Confirmed_Param_True_Should_Set_The_Email_As_Confirmed_If_Not_Confirmed_Already()
         {
             const string userName = "Tugberk";
@@ -358,12 +359,12 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
                     RavenUserEmail userEmail = await ses.LoadAsync<RavenUserEmail>(keyToLookFor);
 
                     Assert.NotNull(userEmail.ConfirmationRecord);
-                    Assert.NotEqual(default(DateTimeOffset), userEmail.ConfirmationRecord.ConfirmedOn);
+                    Assert.AreNotEqual(default(DateTimeOffset), userEmail.ConfirmationRecord.ConfirmedOn);
                 }
             }
         }
 
-        [Fact]
+        [Test]
         public async Task SetEmailConfirmedAsync_With_Confirmed_Param_False_Should_Set_The_Email_As_Not_Confirmed_If_Confirmed_Already()
         {
             const string userName = "Tugberk";
@@ -403,7 +404,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
             }
         }
 
-        [Fact]
+        [Test]
         public async Task SetEmailConfirmedAsync_Should_Throw_InvalidOperationException_If_User_Email_Property_Is_Not_Available()
         {
             const string userName = "Tugberk";
@@ -436,7 +437,7 @@ namespace AspNet.Identity.RavenDB.Tests.Stores
             }
         }
 
-        [Fact]
+        [Test]
         public async Task SetEmailConfirmedAsync_Should_Throw_InvalidOperationException_If_User_Email_Property_Is_Available_But_UserEmail_Document_Not()
         {
             const string userName = "Tugberk";
